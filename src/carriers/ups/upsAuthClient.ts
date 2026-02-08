@@ -13,6 +13,7 @@ export class UpsAuthClient {
   ) {}
 
   async getAccessToken(): Promise<string> {
+    // will return old token if it's not expired
     if (this.token && this.tokenExpiry && Date.now() < this.tokenExpiry) {
       return this.token;
     }

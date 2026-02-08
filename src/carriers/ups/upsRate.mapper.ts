@@ -1,4 +1,5 @@
 import { RateRequest, RateQuote } from "../../domain/rate";
+import { CARRIERS } from "../carrier.types";
 import { UpsRateRequest, UpsRateResponse } from "./upsRate.types";
 
 // converts our standard request body to Ups format request body
@@ -36,7 +37,7 @@ export function mapUpsResponseToRateQuotes(
   response: UpsRateResponse,
 ): RateQuote[] {
   return response.RateResponse.RatedShipment.map((shipment) => ({
-    carrier: "UPS",
+    carrier: CARRIERS.UPS,
     serviceCode: shipment.Service.Code,
     amount: Number(shipment.TotalCharges.MonetaryValue),
     currency: shipment.TotalCharges.CurrencyCode,
