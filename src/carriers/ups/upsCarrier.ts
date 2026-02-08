@@ -1,22 +1,34 @@
 import { Carrier } from "../carrier.interface";
 import { RateRequest, RateQuote } from "../../domain/rate";
+import { HttpClient } from "../../http/httpClient";
+import { UpsAuthClient } from "./upsAuthClient";
+import {
+  mapRateRequestToUps,
+  mapUpsResponseToRateQuotes,
+} from "./upsRate.mapper";
+
+import { UpsRateResponse } from "./upsRate.types";
 
 export class UpsCarrier implements Carrier {
-  async getRates(_: RateRequest): Promise<RateQuote[]> {
-    // Fake response for Task 1
-    return [
+  constructor(
+    private readonly httpClient: HttpClient,
+    private readonly authClient: UpsAuthClient,
+    private readonly rateUrl: string,
+  ) {}
+
+  async getRates(request: RateRequest): Promise<RateQuote[]> {
+    const upsPayload = mapRateRequestToUps(request);
+    const token = await this.authClient.getAccessToken();
+
+    const response = await this.httpClient.post<UpsRateResponse>(
+      this.rateUrl,
+      upsPayload,
       {
-        carrier: "UPS",
-        serviceCode: "03",
-        amount: 12.45,
-        currency: "USD",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      {
-        carrier: "UPS",
-        serviceCode: "02",
-        amount: 24.99,
-        currency: "USD",
-      },
-    ];
+    );
+
+    return mapUpsResponseToRateQuotes(response);
   }
 }
