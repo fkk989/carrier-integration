@@ -1,4 +1,4 @@
-import { RateRequest, RateQuote } from "./domain/rate";
+import { RateRequest, RateQuote, RateRequestSchema } from "./domain/rate";
 import { Carrier, CarrierName } from "./carriers/carrier.types";
 import { UpsCarrier } from "./carriers/ups/upsCarrier";
 import { AxiosHttpClient } from "./http/axiosHttpClient";
@@ -27,12 +27,21 @@ export class ShippingService {
     carrierName: CarrierName,
     request: RateRequest,
   ): Promise<RateQuote[]> {
+    // validation request body
+    const validatedInput = RateRequestSchema.safeParse(request);
+
+    if (!validatedInput.success) {
+      throw new Error(
+        `Invalid rate request: ${validatedInput?.error?.message}`,
+      );
+    }
+
     const carrier = this.carriers[carrierName];
 
     if (!carrier) {
       throw new Error(`Unsupported carrier: ${carrierName}`);
     }
 
-    return carrier.getRates(request);
+    return carrier.getRates(validatedInput.data);
   }
 }

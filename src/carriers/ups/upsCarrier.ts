@@ -17,6 +17,7 @@ export class UpsCarrier implements Carrier {
   ) {}
 
   async getRates(request: RateRequest): Promise<RateQuote[]> {
+    // converting standard request body to ups format
     const upsPayload = mapRateRequestToUps(request);
     const token = await this.authClient.getAccessToken();
 
@@ -29,6 +30,7 @@ export class UpsCarrier implements Carrier {
       },
     );
 
+    // converting ups response to  standard response.
     return mapUpsResponseToRateQuotes(response);
   }
 }
