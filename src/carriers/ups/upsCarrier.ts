@@ -1,4 +1,4 @@
-import { Carrier } from "../carrier.interface";
+import { Carrier } from "../carrier.types";
 import { RateRequest, RateQuote } from "../../domain/rate";
 import { HttpClient } from "../../http/httpClient";
 import { UpsAuthClient } from "./upsAuthClient";
