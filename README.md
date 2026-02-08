@@ -2,6 +2,19 @@
 
 ---
 
+🧠 Design Decisions
+**Standardized Domain First**
+The core design decision was to define carrier-agnostic domain models (RateRequest, RateQuote) and treat them as the source of truth. All carriers adapt to and from these models, ensuring the service API remains stable even as new carriers are added.
+
+**Clear Carrier Boundary**
+Each carrier implements a common Carrier interface. This isolates carrier-specific logic (authentication, request/response mapping) and allows new carriers to be added without changing the ShippingService.
+
+**Validation at the Boundary**
+Runtime validation using Zod is performed at the ShippingService boundary. This ensures invalid input is rejected early and downstream logic can safely rely on validated domain data.
+
+**Stubbed External Integrations**
+Real HTTP calls to UPS are stubbed in tests. This keeps tests deterministic, fast, and focused on business logic rather than network behavior, which aligns with the assessment requirements.
+
 ## ✅ Things Done
 
 - **Standardized domain models**
